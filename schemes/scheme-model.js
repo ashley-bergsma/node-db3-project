@@ -8,7 +8,9 @@ module.exports = {
     findById,
     findSteps,
     add, 
-    update
+    update, 
+    remove,
+    addStep
 }; 
 
 //! Functions Start !// 
@@ -65,3 +67,38 @@ function update(changes, id) {
                 console.log(err); 
             });
 };
+
+function remove(id) {
+    return db('schemes')
+            .where({ id })
+            .del();
+};
+
+//TODO: To add a new step we need the new step to INSERT and the scheme_id to correctly link the step to a scheme, because we are NOT adding it to the Scheme table, we will call the Steps table instead 
+// function addStep(step, scheme_id) {
+//     step.scheme_id = scheme_id; 
+
+//     return db('steps')
+//             .insert(step, 'id')
+//             .then(ids => {
+//                 const [id] = ids;
+//                 return db('steps')
+//                     .where({ id }) 
+//                     .first();
+//             })
+//             .catch(err => {
+//                 console.log(err); 
+//             });
+// };
+
+function addStep(step, schemeId) {
+    step.scheme_id = schemeId;
+    return db('steps')
+      .insert(step, 'id')
+      .then(ids => {
+        const [ id ] = ids;
+        return db('steps')
+          .where({ id })
+          .first();
+      });
+  }
