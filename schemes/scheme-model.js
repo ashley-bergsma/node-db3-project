@@ -6,11 +6,14 @@ const db = require('../data/db-config');
 module.exports = {
     find,
     findById,
-    findSteps
+    findSteps,
+    add, 
+    update
 }; 
 
 //! Functions Start !// 
-//* finding functions *// 
+//* finding functions *// ✅ - All working
+
 function find() {
     return db('schemes'); 
 }; 
@@ -34,3 +37,31 @@ function findSteps(id) {
 };
 
 //* manipulating functions *// 
+
+//TODO: To ADD a Scheme we have to INSERT the scheme and generated ID into the Schemes table
+//TODO: THEN we can use the ID of the new scheme to call the findById function and use the promise to return the newly added scheme and id number
+
+//? Q: Because these functions call another function, and return a promise, what should we be doing with the .catch in these cases? What's best practice? 
+
+function add(scheme) {
+    return db('schemes')
+            .insert(scheme, 'id')
+            .then(([id]) => {
+                return findById(id);
+            })
+            .catch(err => {
+                console.log(err)
+            });
+};
+
+function update(changes, id) {
+    return db('schemes')
+            .where({ id })
+            .update(changes)
+            .then(() => {
+                return findById(id);
+            })
+            .catch(err => {
+                console.log(err); 
+            });
+};
